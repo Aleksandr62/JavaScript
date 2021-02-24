@@ -10,6 +10,38 @@
 
 <body>
     <script>
+        //task 1
+        // ++a сначала увеличивает переменную на 1, затем выводит (передает результат)
+        // a++ - сначала выводит переменную (передает результат), затем увеличивает
+        // c = (2+ ++a); alert(c); c = 2 + ++a (к 2 прибавить увеличенное на 1 значение a: 2 + (2+1) = результат 5)
+        //task 2
+        // var a = 2;
+        // var x = 1 + (a *= 2); результат равен (1 + a = 2*2) = 5
+        //task 3
+        function mathOperation(a, b) {
+            if (a >= 0 && b >= 0) {
+                return a - b;
+            } else if (a < 0 && b < 0) {
+                return a * b;
+            } else {
+                return a + b;
+            }
+        }
+
+        function twoNum() {
+
+            let signA = Math.ceil(Math.random() * 2) <= 1 ? sign = '-' : sign = '';
+            let signB = Math.ceil(Math.random() * 2) <= 1 ? sign = '-' : sign = '';
+            let a = parseInt(signA + Math.floor(Math.random() * 100));
+            let b = parseInt(signB + Math.floor(Math.random() * 100));
+            let answ = prompt(`Результат операции с числами а(${a}) и b(${b}) равен ` + mathOperation(a, b) + '.\nДля выхода введите q, для продолжения - любой символ или enter.');
+            if (answ !== 'q') {
+                twoNum();
+            } else alert('Досвидания');
+        }
+        twoNum();
+
+        // task 4
         function numFefteen(number) {
             switch (true) {
                 case number < 0 || number > 15:
@@ -23,15 +55,61 @@
             }
         }
 
-        function cicle() {
-            let numberInp = prompt('Введите число от 0 до 15 (q - для выхода):');
-            if (numberInp !== 'q') {
-                numberInp = parseInt(numberInp);
-                alert(numFefteen(numberInp));
-                cicle();
+        function cycle() {
+            let a = prompt('Введите число от 0 до 15 (q - для выхода):');
+            if (a !== 'q') {
+                alert(numFefteen(parseInt(a)));
+                cycle();
             } else alert('Досвидания');
         }
-        cicle();
+        cycle();
+        //task 5 - 4 арифметические операции в виде функций с двумя параметрами
+        function multiplication(a, b) {
+            return a * b;
+        }
+
+        function sum(a, b) {
+            return parseInt(a) + parseInt(b);
+        }
+
+        function subtraction(a, b) {
+            return parseInt(a) - parseInt(b);
+        }
+
+        function dividing(a, b) {
+            return a / b;
+        }
+        //task 6 - функция с 3 аргументами
+        function operation(a, b, operation) {
+            switch (operation) {
+                case '*':
+                    return multiplication(a, b);
+                case '+':
+                    return sum(a, b);
+                case '-':
+                    return subtraction(a, b);
+                case '/':
+                    return dividing(a, b);
+            }
+        }
+        let a = prompt('Введите число a: ');
+        let b = prompt('Введите число b: ');
+        let oper = prompt('Укажите желаемую операцию (символ на выбор: /, *, -, +) ');
+        alert(operation(a, b, oper)); *
+        //task 7 - сравнение 0 и null
+        // null == 0,  null === 0  : false, при этом например
+        // undefined == null : true и строгое сравнение undefined === null : false
+        // typeof 0 : number, typeof null : Object
+        // 0 не может быть равен null так как разные типы
+        //task 8 - возведение в степень
+        function power(val, pow) {
+            if (+pow === 1) {
+                return val;
+            } else {
+                return power(+val, +pow - 1) * val;
+            }
+        }
+        alert(power(9, 5));
     </script>
 </body>
 
