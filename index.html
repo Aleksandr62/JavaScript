@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function numFefteen(number) {
+            switch (true) {
+                case number < 0 || number > 15:
+                    return "Введите правильное число от 0 до 15";
+                case number >= 0 && number < 15:
+                    return numFefteen(number + 1) + ' ' + number;
+                case number === 15:
+                    return '15';
+                case number === 'q':
+                    return false;
+            }
+        }
+
+        function cicle() {
+            let numberInp = prompt('Введите число от 0 до 15 (q - для выхода):');
+            if (numberInp !== 'q') {
+                numberInp = parseInt(numberInp);
+                alert(numFefteen(numberInp));
+                cicle();
+            } else alert('Досвидания');
+        }
+        cicle();
+    </script>
+</body>
+
+</html>
