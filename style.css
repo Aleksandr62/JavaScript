@@ -1,0 +1,67 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.header {
+    padding: 1rem;
+    background: cadetblue;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-cart,
+.by-btn {
+    outline: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    border-radius: 5px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.btn-cart {
+    background: coral;
+}
+
+.by-btn {
+    margin-top: 1rem;
+    background: darkorange;
+}
+
+.products {
+    padding: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -15px;
+    margin-right: -15px;
+}
+
+.product-item {
+    padding: 1rem;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    margin: 30px;
+    box-shadow: 2px 2px 5px #222222;
+}
+
+.product-item h3 {
+    text-align: center;
+    color: darkviolet;
+}
+
+.product-item p:before {
+    content: 'Цена: ';
+}
+
+.product-item p {
+    margin-top: 2rem;
+    background: rgb(207, 205, 205);
+    text-align: right;
+    font-weight: 900;
+    color: red;
+}
