@@ -1,119 +1,201 @@
 'use strict';
-// ################# 1 task
-function convertNumToObj(number) {
-    const obj = {
-        units: 0,
-        decade: 0,
-        hundreds: 0,
-    };
-    let num = parseInt(number);
-    if(num > 999 || isNaN(num)) {
-        console.log('Значение не является числом или превышает 999.'); 
-        return {};
-    }
-    if(num > 99) obj.hundreds = Math.floor(num / 100); 
-    if(num > 9) obj.decade = Math.floor(num / 10) - obj.hundreds * 10;   
-    obj.units = num - obj.decade * 10 - obj.hundreds * 100;
-    return obj;
-}
-
-// ################### 2 task 
-// создаем объекты товаров
-const notebook = {
-    name: 'Toshiba',
-    price: 20000,
-    quant: 0,
-};
-const monitor = {
-    name: 'Samsung',
-    price: 8000,
-    quant: 0,    
-};
-const keyboard = {
-    name: 'lg',
-    price: 750,
-    quant: 0,    
-};
-// при добавлении в корзину указываем кол-во
-notebook.quant = 5;
-monitor.quant = 4;
-keyboard.quant = 4;
-// массив корзины (из объектов товаров)
-const order = [
-    notebook,
-    monitor,
-    keyboard,    
+const products = [
+    { id: 1, name: 'Ноутбук', price: 35000, },
+    { id: 2, name: 'Монитор', price: 12000, },
+    { id: 3, name: 'Мышка', price: 1000, },
+    { id: 4, name: 'Клавиатура', price: 2000, },
 ];
 
-function countBasketPrice(arr) {
-    let sumOrder = 0;
-    for (let val of arr) {
-            sumOrder += val.price * val.quant;
+class ProductItem {
+    constructor(product, img = './image.jpg') {
+        this.id = product.id;
+        this.img = img;
+        this.name = product.name;
+        this.price = product.price;
+        // стоит добавить this.quantity - кол-во товаров в магазине и
+        // метод уменьшения (резервирования до продажи) кол-ва при добавлении в корзину 
     }
-    return sumOrder;
+    render() {
+        return `<div class="product__item" data-id=${this.id}>
+        <img class="product__image" src="${this.img}" alt="Image">
+        <h3>${this.name}</h3>
+        <p>${this.price} &#8381;</p>
+        <button class="product__btn">Добавить в корзину</button>
+      </div>`;
+    }
 }
-console.log(countBasketPrice(order));
 
-// #################### 3 task - 2 функции, возвращающие объект товар и объект корзина, с методами подсчета суммарной стоимости товаров (от кол-ва) и корзины.
-// корзин может быть множество (от пользователей сайта), также в корзине необходимы методы добавления, удаления товаров, плюс изменения кол-ва (не реализовал)
-// плюс наверно методы записи/чтения в/из БД (если например заказ не оформлен и пользователь покинул сайт) для истории.
-// в продукте можно еще добавить свойства - характеристики, фото, рейтинг...
+class ProductList {
+    constructor(products, container = '.products') {
+        this.container = document.querySelector(container);
+        this.goods = [];
+        this.goodsLinks = [];
+        this.fetchGoods(products);
+        this.render();
+    }
+    fetchGoods(products) {
+        products.forEach((good) => {
+            this.goods.push(good)
+        });
+    }
+    summaryProducts() {
+        return this.goods.reduce((sum, good) => {
+            return sum + good.price;
+        }, 0);
+    }
+    getProductById(id) {
+        return this.goods.filter((good) => {
+            if (good.id === +id) return good;
+        });
+    }
+    render() {
+        this.goods.forEach((good) => {
+            this.goodsLinks.push(new ProductItem(good))
+        });
+        this.goodsLinks.forEach((good) => {
+            this.container.insertAdjacentHTML('beforeEnd', good.render())
+        });
+    }
+}
 
-function productCreate(id, category, name, price, description = 'не заполнено') {
-    if( id === 'undefined' || name === 'undefined'  || price === undefined ) return null; 
-    const obj = {
-        id: id,
-        name: name,
-        category: category,
-        price: price,
-        description: description,
-        quant: 1,
-        sum() {
-            return this.quant * this.price;
+// класс продукта в корзине
+class OrderItem {
+    constructor(product, img = './image.jpg') {
+        this.id = product.id;
+        this.img = img;
+        this.name = product.name;
+        this.quantity = product.quantity;
+        this.price = product.price;
+    }
+    summaryProduct() {
+        return this.quantity * this.price;
+    }
+    render() {
+        return `<div class="bascet__item" data-id=${this.id}>
+        <img class="bascet__image" src="${this.img}" alt="Image">
+        <h3>${this.name}</h3>
+        <p>Кол-во: ${this.quantity}</p>
+        <p>Цена за ед.: ${this.price} &#8381;</p>
+        <p>Сумма: ${this.summaryProduct()} &#8381;</p>
+        <button class="bascet__btn">Удалить из корзины</button>
+      </div>`;
+    }
+}
+
+// класс корзины
+class Bascet {
+    constructor(container = '.bascet') {
+        this.container = document.querySelector(container);
+        this.goods = [];
+        this.goodsLinks = [];
+    }
+    addProductToBascet(product) {
+            if (this.goods.length === 0) this.goods.push(product);
+            else
+                this.existsProductInBascet(product) ? this.increaseQuant(product) : this.goods.push(product);
         }
-    };
-    return obj;
-}
-function orderCreate(id, user) {
-    if( id === 'undefined' || user === 'undefined' ) return null; 
-    const obj = {
-        id,
-        user,
-        productsOrder: [],
-        addProduct(product, quant) {
-            if(product === null) return;
-            product.quant = quant;
-            this.productsOrder.push( product );        
-        },
-        delProduct(numProduct, count = 1) {
-            // удаление товара(ов) из корзины
-            this.productsOrder.splice(numProduct - 1, count);
-        },
-        sumOrder() {
-            let summary = 0;
-            for (let val of this.productsOrder) {
-                summary += val.sum();          
-            };
-            return summary;
-        },        
-    };
-    return obj;
-}
-const order1 = orderCreate(1, 'Jhon'); 
-const order2 = orderCreate(2, 'Peter');  
+        // увеличение кол-ва (если в корзине есть такой товар)
+    increaseQuant(product) {
+            this.goods.forEach((good) => {
+                if (product.id === good.id) good.quantity++;
+            });
+        }
+        // проверка есть ли в корзине добавляемый продукт
+    existsProductInBascet(product) {
+        return this.goods.some((good) => { return product.id === good.id });
+    }
+    deleteItemFromBascet(id) {
 
-const notebook = productCreate(1, 'notebooks', 'Toshiba', 20000);
-const monitor = productCreate(2, 'monitors', 'Samsung', 8000, '17,5 дюймов');
-const monitor1 = productCreate(3, 'monitors', 'Samsung', 7800, '15 дюймов');
-const keyboard = productCreate(4, 'accessories', 'lg', 750);
-order1.addProduct(notebook, 10);
-order1.addProduct(monitor, 5);
-order1.addProduct(monitor1, 5);
-order1.addProduct(keyboard, 4);
-order2.addProduct(notebook, 3);
-order2.addProduct(monitor1, 1);
-order2.addProduct(keyboard, 2);
-console.log(order1.productsOrder);
-console.log(order1.sumOrder());
-console.log(order2.productsOrder);
-console.log(order2.sumOrder());
+        }
+        // 2. Добавьте для корзины (GoodsList) метод, определяющий суммарную стоимость всех товаров.
+    summaryOrder() {
+        return this.goods.reduce((sum, good) => {
+            return sum + good.price * good.quantity;
+        }, 0);
+    }
+    render() {
+        this.goods.forEach((good) => {
+            this.goodsLinks.push(new OrderItem(good))
+        });
+        this.goodsLinks.forEach((good) => {
+            this.container.insertAdjacentHTML('beforeEnd', good)
+        });
+    }
+}
+
+// теоретически можно унифицировать класс продукта 
+// и либо наследовать продукт корзины от него (с добавлением методов)
+// либо применять один класс от объекта-заказчика
+const catalog = new ProductList(products);
+const bascet = new Bascet();
+
+/* 3 задача:------------------------------------------------
+ Некая сеть фастфуда предлагает несколько видов гамбургеров:
+    Маленький (50 рублей, 20 калорий).
+    Большой (100 рублей, 40 калорий).
+Гамбургер может быть с одним из нескольких видов начинок (обязательно):
+    С сыром (+10 рублей, +20 калорий).
+    С салатом (+20 рублей, +5 калорий).
+    С картофелем (+15 рублей, +10 калорий).
+Дополнительно гамбургер можно 
+    посыпать приправой (+15 рублей, +0 калорий) 
+    и полить майонезом (+20 рублей, +5 калорий). 
+Напишите программу, рассчитывающую стоимость и калорийность гамбургера. 
+Можно использовать примерную архитектуру класса со следующей страницы, но можно использовать и свою.
+ */
+
+class Hamburger {
+    constructor(size = { size: 'small', price: 50, calories: 20, }, baseTopping = 'cheese') {
+        this.size = size;
+        this.stuffing = [];
+        this.addTopping(baseTopping);
+    }
+    addTopping(topping) { // Добавить добавку 
+        this.stuffing.push(...this.selectTopping(topping));
+    }
+    removeTopping(topping) { // Убрать добавку 
+        this.stuffing = this.stuffing.map((stuff) => {
+            if (topping !== stuff.name) return stuff;
+        });
+    }
+    selectTopping(topping) {
+        // выбрать добавку для добавления
+        return this.getToppings().filter((stuff) => {
+            if (topping === stuff.name) return stuff;
+        });
+    }
+    getToppings() { // Получить список добавок 
+        return [
+            { name: 'cheese', price: 10, calories: 20, },
+            { name: 'salad', price: 20, calories: 5, },
+            { name: 'potato', price: 15, calories: 10, },
+            { name: 'spice', price: 15, calories: 0, },
+            { name: 'mayonnaise', price: 20, calories: 5, },
+        ];
+    }
+    getSize() { // Узнать размер гамбургера 
+        return this.size.size;
+    }
+    getStuffing() { // Узнать начинку гамбургера 
+        return this.stuffing.map((stuff) => { return stuff.name });
+    }
+    calculatePrice() { // Узнать цену 
+        return this.size.price + this.stuffing.reduce((price, stuff) => { return price + stuff.price }, 0);
+    }
+    calculateCalories() { // Узнать калорийность 
+        return this.size.calories + this.stuffing.reduce((calories, stuff) => { return calories + stuff.calories }, 0);
+    }
+}
+
+const hambSmall = new Hamburger();
+const hambBig = new Hamburger({ size: 'big', price: 100, calories: 40, });
+hambSmall.addTopping('salad');
+hambSmall.addTopping('potato');
+hambSmall.addTopping('mayonnaise');
+hambBig.addTopping('potato');
+console.log(hambSmall.getStuffing());
+console.log(hambSmall.calculatePrice());
+console.log(hambSmall.calculateCalories());
+console.log(hambBig.getStuffing());
+console.log(hambBig.calculatePrice());
+console.log(hambBig.calculateCalories());
