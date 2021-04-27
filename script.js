@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 const products = [
     { id: 1, name: 'Ноутбук', price: 35000, },
     { id: 2, name: 'Монитор', price: 12000, },
@@ -6,11 +6,36 @@ const products = [
     { id: 4, name: 'Клавиатура', price: 2000, },
 ];
 
+const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
+
+/*
+//Задача 1 -------------------------------------------
+// Переделать в ДЗ не использовать fetch а Promise
+let makeGetRequest = (url) => {
+	return new Promise((resolve, reject) => {
+		let xhr = new XMLHttpRequest();
+		xhr.open('GET', url, true);
+		xhr.send();
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+            if (xhr.status !== 200) {
+                console.log('Error');
+            } else {
+                resolve(xhr.response);
+            }
+        }
+    };
+
+	})
+
+};
+*/
+
 class ProductItem {
-    constructor(product, img = './image.jpg') {
-        this.id = product.id;
+    constructor(product, img = './image.png') {
+        this.id = product.product_id;
         this.img = img;
-        this.name = product.name;
+        this.name = product.product_name;
         this.price = product.price;
         // стоит добавить this.quantity - кол-во товаров в магазине и
         // метод уменьшения (резервирования до продажи) кол-ва при добавлении в корзину 
@@ -30,13 +55,36 @@ class ProductList {
         this.container = document.querySelector(container);
         this.goods = [];
         this.goodsLinks = [];
-        this.fetchGoods(products);
-        this.render();
+        this.fetchGoods(`${API}/catalogData.json`)
+            .then((data) => {
+        	this.goods = data;
+	})
+            .then(() => {
+        	this.render();
+	})
+
     }
-    fetchGoods(products) {
-        products.forEach((good) => {
-            this.goods.push(good)
-        });
+    fetchGoods(url) {
+// Задача 3 -------------------------------------------	
+	return new Promise((resolve, reject) => {
+		let xhr = new XMLHttpRequest();
+		xhr.open('GET', url, true);
+		xhr.responseType = 'json';
+		xhr.send();
+		xhr.onload = () => resolve(xhr.response);
+	})
+
+/* Задача 1 -------------------------------------------	
+ 	return makeGetRequest(`${API}/catalogData.json`)
+            .then((data) => {
+                this.goods = JSON.parse(data);
+	}) */
+
+/*        return fetch(`${API}/catalogData.json`)
+            .then((response) => response.json())
+            .catch((error) => {
+                console.log(error);
+            }); */
     }
     summaryProducts() {
         return this.goods.reduce((sum, good) => {
@@ -60,10 +108,10 @@ class ProductList {
 
 // класс продукта в корзине
 class OrderItem {
-    constructor(product, img = './image.jpg') {
-        this.id = product.id;
+    constructor(product, img = './image.png') {
+        this.id = product.product_id;
         this.img = img;
-        this.name = product.name;
+        this.name = product.product_name;
         this.quantity = product.quantity;
         this.price = product.price;
     }
@@ -88,9 +136,26 @@ class Bascet {
         this.container = document.querySelector(container);
         this.goods = [];
         this.goodsLinks = [];
+	this.getBascetProduct(`${API}/getBasket.json`)
+            .then((data) => {
+        	this.goods = data.contents;
+	})
+            .then(() => {
+        	this.render();
+	})
     }
-    addProductToBascet(product) {
-            if (this.goods.length === 0) this.goods.push(product);
+// из задачи 2 запрос на сервер список продуктов из getBasket.json
+    getBascetProduct(url) {
+	return new Promise((resolve, reject) => {
+		let xhr = new XMLHttpRequest();
+		xhr.open('GET', url, true);
+		xhr.responseType = 'json';
+		xhr.send();
+		xhr.onload = () => resolve(xhr.response);
+	})
+    }
+    addProductToBascet(url) {
+           if (this.goods.length === 0) this.goods.push(product);
             else
                 this.existsProductInBascet(product) ? this.increaseQuant(product) : this.goods.push(product);
         }
@@ -118,84 +183,10 @@ class Bascet {
             this.goodsLinks.push(new OrderItem(good))
         });
         this.goodsLinks.forEach((good) => {
-            this.container.insertAdjacentHTML('beforeEnd', good)
+            this.container.insertAdjacentHTML('beforeEnd', good.render())
         });
     }
 }
 
-// теоретически можно унифицировать класс продукта 
-// и либо наследовать продукт корзины от него (с добавлением методов)
-// либо применять один класс от объекта-заказчика
 const catalog = new ProductList(products);
 const bascet = new Bascet();
-
-/* 3 задача:------------------------------------------------
- Некая сеть фастфуда предлагает несколько видов гамбургеров:
-    Маленький (50 рублей, 20 калорий).
-    Большой (100 рублей, 40 калорий).
-Гамбургер может быть с одним из нескольких видов начинок (обязательно):
-    С сыром (+10 рублей, +20 калорий).
-    С салатом (+20 рублей, +5 калорий).
-    С картофелем (+15 рублей, +10 калорий).
-Дополнительно гамбургер можно 
-    посыпать приправой (+15 рублей, +0 калорий) 
-    и полить майонезом (+20 рублей, +5 калорий). 
-Напишите программу, рассчитывающую стоимость и калорийность гамбургера. 
-Можно использовать примерную архитектуру класса со следующей страницы, но можно использовать и свою.
- */
-
-class Hamburger {
-    constructor(size = { size: 'small', price: 50, calories: 20, }, baseTopping = 'cheese') {
-        this.size = size;
-        this.stuffing = [];
-        this.addTopping(baseTopping);
-    }
-    addTopping(topping) { // Добавить добавку 
-        this.stuffing.push(...this.selectTopping(topping));
-    }
-    removeTopping(topping) { // Убрать добавку 
-        this.stuffing = this.stuffing.map((stuff) => {
-            if (topping !== stuff.name) return stuff;
-        });
-    }
-    selectTopping(topping) {
-        // выбрать добавку для добавления
-        return this.getToppings().filter((stuff) => {
-            if (topping === stuff.name) return stuff;
-        });
-    }
-    getToppings() { // Получить список добавок 
-        return [
-            { name: 'cheese', price: 10, calories: 20, },
-            { name: 'salad', price: 20, calories: 5, },
-            { name: 'potato', price: 15, calories: 10, },
-            { name: 'spice', price: 15, calories: 0, },
-            { name: 'mayonnaise', price: 20, calories: 5, },
-        ];
-    }
-    getSize() { // Узнать размер гамбургера 
-        return this.size.size;
-    }
-    getStuffing() { // Узнать начинку гамбургера 
-        return this.stuffing.map((stuff) => { return stuff.name });
-    }
-    calculatePrice() { // Узнать цену 
-        return this.size.price + this.stuffing.reduce((price, stuff) => { return price + stuff.price }, 0);
-    }
-    calculateCalories() { // Узнать калорийность 
-        return this.size.calories + this.stuffing.reduce((calories, stuff) => { return calories + stuff.calories }, 0);
-    }
-}
-
-const hambSmall = new Hamburger();
-const hambBig = new Hamburger({ size: 'big', price: 100, calories: 40, });
-hambSmall.addTopping('salad');
-hambSmall.addTopping('potato');
-hambSmall.addTopping('mayonnaise');
-hambBig.addTopping('potato');
-console.log(hambSmall.getStuffing());
-console.log(hambSmall.calculatePrice());
-console.log(hambSmall.calculateCalories());
-console.log(hambBig.getStuffing());
-console.log(hambBig.calculatePrice());
-console.log(hambBig.calculateCalories());
