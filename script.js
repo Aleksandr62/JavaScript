@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 const products = [
     { id: 1, name: 'Ноутбук', price: 35000, },
     { id: 2, name: 'Монитор', price: 12000, },
@@ -97,6 +97,7 @@ class ProductList {
         });
     }
     render() {
+	this.goodsLinks = [];
         this.goods.forEach((good) => {
             this.goodsLinks.push(new ProductItem(good))
         });
@@ -121,10 +122,12 @@ class OrderItem {
     render() {
         return `<div class="bascet__item" data-id=${this.id}>
         <img class="bascet__image" src="${this.img}" alt="Image">
+	<div>
         <h3>${this.name}</h3>
         <p>Кол-во: ${this.quantity}</p>
         <p>Цена за ед.: ${this.price} &#8381;</p>
         <p>Сумма: ${this.summaryProduct()} &#8381;</p>
+	</div>
         <button class="bascet__btn">Удалить из корзины</button>
       </div>`;
     }
@@ -179,6 +182,7 @@ class Bascet {
         }, 0);
     }
     render() {
+	this.goodsLinks = [];
         this.goods.forEach((good) => {
             this.goodsLinks.push(new OrderItem(good))
         });
@@ -190,3 +194,17 @@ class Bascet {
 
 const catalog = new ProductList(products);
 const bascet = new Bascet();
+document.querySelector('body').addEventListener('click', (event) => {
+		if(event.target.className === 'btn-cart') {
+			bascet.container.style.display = 'flex';
+			catalog.container.style.display = 'none';
+			bascet.container.innerText = '';
+			bascet.render(); 
+		}
+		if(event.target.className === 'logo') {
+			bascet.container.style.display = 'none';
+			catalog.container.style.display = 'flex';
+			catalog.container.innerText = '';
+			catalog.render(); 
+		}
+});
