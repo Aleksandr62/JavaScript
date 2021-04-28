@@ -1,4 +1,4 @@
-﻿* {
+* {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
@@ -7,6 +7,7 @@
 .logo {
     display: flex;
     justify-content: flex-start;
+    cursor: pointer;
 }
 
 .header {
@@ -26,7 +27,8 @@
 }
 
 .btn-cart,
-.product__btn {
+.product__btn,
+.bascet__btn {
     outline: none;
     cursor: pointer;
     text-transform: uppercase;
@@ -39,7 +41,8 @@
 }
 
 .btn-cart:hover,
-.product__btn:hover {
+.product__btn:hover,
+.bascet__btn:hover {
     background: rgb(248, 98, 44);
 }
 
@@ -58,15 +61,33 @@
     box-shadow: 2px 2px 5px #222222;
 }
 
-.product__item h3 {
+.product__item h3,
+.bascet__item h3 {
     text-align: center;
     color: darkviolet;
 }
 
-.product__item p {
+.product__item p,
+.bascet__item p {
     margin: 2rem 1rem;
     background: rgb(207, 205, 205);
     text-align: right;
     font-weight: 900;
     color: red;
+}
+
+.bascet {
+    display: none;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.bascet__item {
+    padding: 1rem;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 30px;
+    box-shadow: 2px 2px 5px #222222;
 }
