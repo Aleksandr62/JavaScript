@@ -4,90 +4,59 @@
     box-sizing: border-box;
 }
 
-.logo {
+.fb {
+padding: 2rem;;
+}
+
+.feedback {
+    padding: 1.5rem;
+    width: 400px;
+    background: rgb(70, 70, 70);
     display: flex;
-    justify-content: flex-start;
-    cursor: pointer;
-}
-
-.header {
-    padding: 1rem;
-    background: cadetblue;
-    font-size: 18px;
-    color: white;
-    font-weight: 700;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.center {
-    padding-left: calc(100% - 570px);
-    padding-right: calc(100% - 570px);
-}
-
-.btn-cart,
-.product__btn,
-.bascet__btn {
-    outline: none;
-    cursor: pointer;
-    text-transform: uppercase;
-    border-radius: 5px;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    background: coral;
-}
-
-.btn-cart:hover,
-.product__btn:hover,
-.bascet__btn:hover {
-    background: rgb(248, 98, 44);
-}
-
-.products {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
-
-.product__item {
-    padding: 1rem;
-    border-radius: 5px;
-    display: flex;
+    line-height: 1.5rem;
     flex-direction: column;
-    margin: 30px;
-    box-shadow: 2px 2px 5px #222222;
-}
-
-.product__item h3,
-.bascet__item h3 {
-    text-align: center;
-    color: darkviolet;
-}
-
-.product__item p,
-.bascet__item p {
-    margin: 2rem 1rem;
-    background: rgb(207, 205, 205);
-    text-align: right;
     font-weight: 900;
-    color: red;
+    color: white;
+    border-radius: 5px;
 }
 
-.bascet {
-    display: none;
-    flex-wrap: wrap;
-    flex-direction: column;
-    justify-content: space-between;
+.feedback input {
+    margin-bottom: 6px;
+    padding: 4px;
 }
-.bascet__item {
-    padding: 1rem;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 30px;
-    box-shadow: 2px 2px 5px #222222;
+
+.feedback input:focus {
+    outline: 1px solid rgb(255, 255, 255); 
+}
+
+.feedback__button {
+    margin-top: 1rem;
+    cursor: pointer;
+    padding: 6px;
+    outline: none;
+    border: 1px solid rgb(255, 255, 255); 
+    border-radius: 3px;
+    background: rgb(255, 255, 255);    
+    width: 100px;
+    align-self: flex-end;
+    color: rgb(70, 70, 70);
+}
+
+.feedback__button:hover {
+    margin-top: 1rem;
+    background: rgb(70, 70, 70);   
+    color: white;
+    border: 1px solid white;
+}
+
+.warning {
+    border: 2px solid red;
+}
+
+.spanWarning {
+    margin-top: -0.25rem;
+    text-align: right;
+    font-size: 12px;
+    line-height: 1rem;    
+    color: red;
 }
