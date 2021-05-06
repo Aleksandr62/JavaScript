@@ -135,7 +135,7 @@ body {
     top: calc(100% + 18px);
     right: 0;
     background: white;
-    border: 1px solid #222222;
+    border: 1px solid #EBEBEB;
     border-radius: 3px;
     box-shadow: 1px 1px 3px #222222;
     z-index: 100;
@@ -143,8 +143,8 @@ body {
 
 .bascet::before {
     content: '';
-    border-left: 1px solid #222222;
-    border-top: 1px solid #222222;
+    border-left: 1px solid #EBEBEB;
+    border-top: 1px solid #EBEBEB;
     background: white;
     position: absolute;
     width: 20px;
@@ -212,4 +212,17 @@ body {
     font-size: 16px;
     text-align: left;
     font-weight: 900;
+}
+.error {
+    width: fit-content;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: tomato;
+    border-radius: 5px;
+    color: white;
+    font-weight: 900;
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
 }
