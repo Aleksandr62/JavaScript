@@ -42,7 +42,6 @@
               this.bascetGoods[index].quantity++;
           };
         })
-        .catch((error) => this.$root.error); // ДОБАВИТЬ МЕТОД!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     },
     delProduct(product) {
       this.$root.getJson(this.$root.API + this.delUrl)
@@ -54,7 +53,6 @@
               this.bascetGoods.splice(this.bascetGoods.indexOf(product), 1);
           }
         })
-        .catch((error) => this.$root.error); // ДОБАВИТЬ МЕТОД!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     },
     summaryOrder() {
       return this.bascetGoods.reduce(
@@ -80,7 +78,6 @@
           this.bascetGoods.push(el);
         }
       })
-      .catch((error) => this.$root.error); // ДОБАВИТЬ МЕТОД!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   },
   updated() {
     if (this.bascetGoods.length === 0) {
